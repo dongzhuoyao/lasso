@@ -24,12 +24,7 @@ tic;
 [x1, out1] = l1_cvx_mosek(x0, A, b, mu, opts1);
 t1 = toc;
 
-opts6 = [0.05,10000]; %modify options
-tic; 
-[x6, out6] = l1_fprox_primal(x0, A, b, mu, opts6);
-t6 = toc;
-
-opts6 = [0.05,10000]; %modify options
+opts6 = [0.0005,500]; %modify options
 tic; 
 [x6, out6] = armijo_subgradient_descent(x0, A, b, mu, opts6);
 t6 = toc;
