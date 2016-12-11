@@ -1,48 +1,50 @@
 function [min_result_at_x,min_result] = armijo_fast_proximal_gradient_for_smoothed_primal(x0, A, b, mu, opts6)
+n = size(A,2);
 gradient_threshold = opts6(1);
 iter_num = opts6(2);
-n = size(A,2);
-m = size(A,1);
-%fprintf('iteration sub_gradient L2 norm Threshold: %f\n',sg_threshold)
-%fprintf('iteration number: %i\n',iter_num)
-min_result = 999999999999;
-min_result_at_x = x0;
+x = x0;
 pre_x = x0;
-pre_pre_x = x0;
+pre_pre_x =x0;
 
+mu_target = mu;
+mu = mu*1e5;
 
-
-for i= 1:iter_num
- 
-  new_y = pre_x-(i-2)*(pre_x-pre_pre_x)/(i+1);
-  
-  [step_size,aa] = steepdesc(new_y,@gx);
-  delta_g = arrayfun(@smooth_gradient,new_y);
-  u = new_y - step_size*delta_g;
-  left = (eye(n)+step_size* A'*A)^-1;
-  right1 = u;
-  right2 = step_size*A'*b;
-  right = right1+right2;
-  new_x =  left * right;
-  
-  pre_pre_x = pre_x;
-  pre_x =new_x;
-
-  f_x = 0.5*(norm(A*new_x-b,2)^2)+mu*norm(new_x,1);
-  
-  min_result = f_x;
-  min_result_at_x = new_x;
-  fprintf('new minimal value: %f\n',min_result);
+while mu>=mu_target
+    
+    for i= 1:iter_num
+      y = pre_x+(i-2)*(pre_x-pre_pre_x)*1.0/(i+1); 
+      delta_g = A'*(A*y-b);
+      fprintf('norm_gradient: %f\n', norm(delta_g))
+      if  norm(delta_g) < gradient_threshold
+          break;
+      end
+      %step_size = 4e-4;
+      step_size = steepdesc(x,@gx,mu);
+      u = y-step_size*delta_g;
+      
+      %shrinkage 
+      x = arrayfun(@shrinkage,u,mu*step_size*ones(n,1)); 
+      pre_pre_x = pre_x;
+      pre_x = x;
+    end
+    
+    mu = mu/10.0;
+    
 end
 
+
+min_result_at_x = x;
+min_result = 0.5*norm(A*x-b)^2+mu_target*norm(x,1);
 
 fprintf('min_value %f\n', min_result)
+
+function [f, g] = gx(x,mu)
+   f = 0.5*norm(A*x-b)^2;
+   g = A'*(A*x-b);
 end
 
- function [f, g] = gx(x)
-f = arrayfun(@smooth_fx,x);
-g = arrayfun(@smooth_gradient,x);
- end
+end
+
 
 
     
