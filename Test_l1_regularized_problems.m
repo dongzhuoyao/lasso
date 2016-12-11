@@ -24,15 +24,17 @@ tic;
 [x1, out1] = l1_cvx_mosek(x0, A, b, mu, opts1);
 t1 = toc;
 
-opts6 = [0.0005,500]; %modify options
+opts6 = [1e-4,100]; %modify options
 tic; 
 [x6, out6] = armijo_subgradient_descent(x0, A, b, mu, opts6);
 t6 = toc;
 
-opts9 = [0.0005,10000]; %modify options
+opts9 = [1e-4,100]; %modify options
 tic; 
 [x9, out9] = armijo_proximal_gradient_for_primal(x0, A, b, mu, opts9);
 t9 = toc;
+
+
 
 
 % cvx calling gurobi

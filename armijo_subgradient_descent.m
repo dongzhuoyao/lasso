@@ -4,19 +4,16 @@ sg_threshold = opts6(1);
 iter_num = opts6(2);
 pre_x = x0;
 mu_target = mu;
-mu = mu*1e3;
+mu = mu*1e5;
 %continuation
 while mu>=mu_target
         
     for i= 1:iter_num
-      %sign_value = arrayfun(@my_sign,new_x);
+      %sign_value = arrayfun(@my_sign,new_x,0.02*one(n,1));
       [aa,sub_gradient] = lasso(pre_x,mu);
       step_size = steepdesc(pre_x,@lasso,mu);
-      fprintf('step_size: %f\n',step_size);
-      
-      new_x = pre_x-step_size*sub_gradient;
-      
-      
+      fprintf('step_size: %f\n',step_size); 
+      new_x = pre_x-step_size*sub_gradient;  
       fprintf('subgradiant L2 norm: %f\n',norm(pre_x-new_x));
       if norm(pre_x-new_x)<sg_threshold
           fprintf('subgradient L2 norm too small,stop...\n');        
