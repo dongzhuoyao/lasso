@@ -24,6 +24,16 @@ tic;
 [x1, out1] = l1_cvx_mosek(x0, A, b, mu, opts1);
 t1 = toc;
 
+opts7 = [1e-4,100]; %modify options
+tic; 
+[x7, out7] = armijo_gradient_for_smoothed_primal(x0, A, b, mu, opts7);
+t7 = toc;
+
+opts5 = [1e-4,100]; %modify options
+tic; 
+[x5, out5] = armijo_projection_gradient_descend_2(x0, A, b, mu, opts5);
+t5 = toc;
+
 opts6 = [1e-4,100]; %modify options
 tic; 
 [x6, out6] = armijo_subgradient_descent(x0, A, b, mu, opts6);
@@ -45,22 +55,12 @@ t2 = toc;
 
 
 
-
-opts5 = [0.05,10000]; %modify options
-tic; 
-[x5, out5] = armijo_projection_gradient_descend_2(x0, A, b, mu, opts5);
-t5 = toc;
-
 %{
 SLOW
 
 %}
 
 
-opts7 = [0.05,5000]; %modify options
-tic; 
-[x7, out7] = armijo_gradient_for_smoothed_primal(x0, A, b, mu, opts7);
-t7 = toc;
 
 opts11 = [0.05,1000]; %modify options
 tic; 
