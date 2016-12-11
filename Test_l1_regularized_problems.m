@@ -24,20 +24,23 @@ tic;
 [x1, out1] = l1_cvx_mosek(x0, A, b, mu, opts1);
 t1 = toc;
 
-opts8 = [1e-4,100]; %modify options
-tic; 
-[x8, out8] = armijo_fast_proximal_gradient_for_primal(x0, A, b, mu, opts8);
-t8 = toc;
-
 opts11 = [1e-4,100]; %modify options
 tic; 
-[x11, out11] = armijo_fast_proximal_gradient_for_smoothed_primal(x0, A, b, mu, opts11);
+[x11, out11] = armijo_fast_gradient_for_smoothed_primal(x0, A, b, mu, opts11);
 t11 = toc;
+
 
 opts7 = [1e-4,100]; %modify options
 tic; 
 [x7, out7] = armijo_gradient_for_smoothed_primal(x0, A, b, mu, opts7);
 t7 = toc;
+
+
+opts8 = [1e-4,100]; %modify options
+tic; 
+[x8, out8] = armijo_fast_proximal_gradient_for_primal(x0, A, b, mu, opts8);
+t8 = toc;
+
 
 opts5 = [1e-4,100]; %modify options
 tic; 
