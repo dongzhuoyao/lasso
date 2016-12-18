@@ -15,13 +15,13 @@ while mu>=mu_target
       y = pre_x+(i-2)*(pre_x-pre_pre_x)*1.0/(i+1); 
       delta_g = A'*(A*y-b)+mu*arrayfun(@smooth_gradient,y);
       fprintf('norm_gradient: %f\n', norm(delta_g))
-      if  norm(delta_g) < gradient_threshold
+      
+      %step_size = 1e-4;
+      step_size = steepdesc(x,@lasso,mu);
+      x = y-step_size*delta_g;
+      if  norm(delta_g) < gradient_threshold ||norm(step_size*delta_g)<1e-4
           break;
       end
-      step_size = 1e-4;
-      %step_size = steepdesc(x,@lasso,mu); too slow!!
-      x = y-step_size*delta_g;
-      
       pre_pre_x = x;
       pre_x =x;
       
@@ -34,12 +34,12 @@ end
 
 
 min_result_at_x = x;
-min_result = 0.5*norm(A*x-b)^2+mu_target*norm(x,1);
+min_result = 0.5*(norm(A*x-b,2)^2)+mu*norm(arrayfun(@smooth_fx,x),1);
 
 fprintf('min_value %f\n', min_result)
 
 function [f, g] = lasso(x,mu)
-f = 0.5*(norm(A*x-b,2)^2)+mu*arrayfun(@smooth_fx,x);
+f = 0.5*(norm(A*x-b,2)^2)+mu*norm(arrayfun(@smooth_fx,x),1);
 g = A'*(A*x-b)+mu*arrayfun(@smooth_gradient,x);
  end
 
